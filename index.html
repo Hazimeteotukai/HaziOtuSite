@@ -93,7 +93,7 @@
                         .then(data => {
                             const lines = data.split('\n');
                             const maintenanceMode = lines[0].trim();
-                            const allowedIp = lines[1].trim();
+                            const allowedIp = lines[1] ? lines[1].trim() : "";
 
                             if (maintenanceMode === "0" && allowedIp !== userIp) {
                                 document.body.innerHTML = "<h1>メンテナンス中</h1>";
@@ -151,7 +151,14 @@
                                 });
                             }
                         })
-                        .catch(error => console.error('メンテナンスファイルの取得中にエラーが発生しました:', error));
+                        .catch(error => {
+                            console.error('メンテナンスファイルの取得中にエラーが発生しました:', error);
+                            document.body.innerHTML = "<h1>エラーが発生しました</h1>";
+                        });
+                })
+                .catch(error => {
+                    console.error('IPアドレスの取得中にエラーが発生しました:', error);
+                    document.body.innerHTML = "<h1>エラーが発生しました</h1>";
                 });
         });
     </script>
