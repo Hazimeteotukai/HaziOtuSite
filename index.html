@@ -83,93 +83,56 @@
     </div>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            fetch('https://api.ipify.org?format=json')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('IPアドレスの取得に失敗しました');
-                    }
-                    return response.json();
-                })
-                .then(ipData => {
-                    const userIp = ipData.ip;
-                    console.log(`取得したIPアドレス: ${userIp}`); // デバッグ情報
+            var isFirstVisit = localStorage.getItem("isFirstVisit");
+            var termsElement = document.getElementById("terms");
+            var agreeButton = document.getElementById("agreeButton");
+            var welcomeElement = document.querySelector(".welcome");
+            var otsukaiSiteElement = document.getElementById("otsukaiSite");
+            var linksElement = document.getElementById("links");
 
-                    return fetch('mente.txt')
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('メンテナンスファイルの取得に失敗しました');
-                            }
-                            return response.text();
-                        })
-                        .then(data => {
-                            console.log(`mente.txtの内容: ${data}`); // デバッグ情報
-                            const lines = data.split('\n');
-                            const maintenanceMode = lines[0].trim();
-                            const allowedIp = lines[1] ? lines[1].trim() : "";
+            if (!isFirstVisit) {
+                termsElement.style.display = "block";
+            } else {
+                welcomeElement.style.display = "block";
+                otsukaiSiteElement.style.display = "block";
+                linksElement.style.display = "flex";
+                setTimeout(function() {
+                    welcomeElement.style.opacity = "1";
+                    welcomeElement.style.filter = "blur(0)";
+                }, 0);
+            }
 
-                            console.log(`メンテナンスモード: ${maintenanceMode}, 許可されたIPアドレス: ${allowedIp}`); // デバッグ情報
+            agreeButton.addEventListener("click", function() {
+                localStorage.setItem("isFirstVisit", "true");
+                termsElement.style.display = "none";
+                welcomeElement.style.display = "block";
+                otsukaiSiteElement.style.display = "block";
+                linksElement.style.display = "flex";
 
-                            if (maintenanceMode === "0" && allowedIp !== userIp) {
-                                document.body.innerHTML = "<h1>メンテナンス中</h1>";
-                            } else {
-                                // 通常のコードを実行
-                                var isFirstVisit = localStorage.getItem("isFirstVisit");
-                                var termsElement = document.getElementById("terms");
-                                var agreeButton = document.getElementById("agreeButton");
-                                var welcomeElement = document.querySelector(".welcome");
-                                var otsukaiSiteElement = document.getElementById("otsukaiSite");
-                                var linksElement = document.getElementById("links");
+                fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(data => {
+                        var ip = data.ip;
+                        var dateTime = new Date().toISOString();
+                        var webhookUrl = "https://discord.com/api/webhooks/1224703231314104441/ZrFrEPxw68-kyV5NqNvTcI0R37eZ4anI8blIGIh-uUUZ7h5VuAI1MIrpm2Xmk4zECs_F";
+                        var payload = {
+                            content: `IPアドレス: ${ip}\n日時: ${dateTime}`
+                        };
 
-                                if (!isFirstVisit) {
-                                    termsElement.style.display = "block";
-                                } else {
-                                    welcomeElement.style.display = "block";
-                                    otsukaiSiteElement.style.display = "block";
-                                    linksElement.style.display = "flex";
-                                    setTimeout(function() {
-                                        welcomeElement.style.opacity = "1";
-                                        welcomeElement.style.filter = "blur(0)";
-                                    }, 0);
-                                }
-
-                                agreeButton.addEventListener("click", function() {
-                                    localStorage.setItem("isFirstVisit", "true");
-                                    termsElement.style.display = "none";
-                                    welcomeElement.style.display = "block";
-                                    otsukaiSiteElement.style.display = "block";
-                                    linksElement.style.display = "flex";
-
-                                    fetch('https://api.ipify.org?format=json')
-                                        .then(response => response.json())
-                                        .then(data => {
-                                            var ip = data.ip;
-                                            var dateTime = new Date().toISOString();
-                                            var webhookUrl = "https://discord.com/api/webhooks/1224703231314104441/ZrFrEPxw68-kyV5NqNvTcI0R37eZ4anI8blIGIh-uUUZ7h5VuAI1MIrpm2Xmk4zECs_F";
-                                            var payload = {
-                                                content: `IPアドレス: ${ip}\n日時: ${dateTime}`
-                                            };
-
-                                            fetch(webhookUrl, {
-                                                method: 'POST',
-                                                headers: {
-                                                    'Content-Type': 'application/json'
-                                                },
-                                                body: JSON.stringify(payload)
-                                            });
-                                        });
-
-                                    setTimeout(function() {
-                                        welcomeElement.style.opacity = "1";
-                                        welcomeElement.style.filter = "blur(0)";
-                                    }, 0);
-                                });
-                            }
+                        fetch(webhookUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
                         });
-                })
-                .catch(error => {
-                    console.error('エラーが発生しました:', error);
-                    document.body.innerHTML = `<h1>エラーが発生しました: ${error.message}</h1>`;
-                });
+                    });
+
+                setTimeout(function() {
+                    welcomeElement.style.opacity = "1";
+                    welcomeElement.style.filter = "blur(0)";
+                }, 0);
+            });
         });
     </script>
 </body>
