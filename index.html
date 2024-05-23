@@ -84,65 +84,75 @@
     <button id="testButton" style="display: none;">test</button>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var isFirstVisit = localStorage.getItem("isFirstVisit");
-            var termsElement = document.getElementById("terms");
-            var agreeButton = document.getElementById("agreeButton");
-            var welcomeElement = document.querySelector(".welcome"); // ようこその要素を取得
-            var otsukaiSiteElement = document.getElementById("otsukaiSite");
-            var linksElement = document.getElementById("links");
-            var testButton = document.getElementById("testButton");
+            // メンテナンスファイルを読み込み
+            fetch('mente.txt')
+                .then(response => response.text())
+                .then(data => {
+                    // メンテナンスモードかどうかをチェック
+                    if (data.trim() === "0") {
+                        document.body.innerHTML = "<h1>メンテナンス中</h1>"; // メンテナンスモードの場合はメッセージを表示
+                    } else {
+                        // メンテナンスモードでない場合、通常のコードを実行
+                        var isFirstVisit = localStorage.getItem("isFirstVisit");
+                        var termsElement = document.getElementById("terms");
+                        var agreeButton = document.getElementById("agreeButton");
+                        var welcomeElement = document.querySelector(".welcome");
+                        var otsukaiSiteElement = document.getElementById("otsukaiSite");
+                        var linksElement = document.getElementById("links");
+                        var testButton = document.getElementById("testButton");
 
-            if (!isFirstVisit) {
-                termsElement.style.display = "block";
-            } else {
-                welcomeElement.style.display = "block";
-                otsukaiSiteElement.style.display = "block";
-                linksElement.style.display = "flex";
-                testButton.style.display = "block"; // 初回訪問でなければボタンを表示
-                setTimeout(function() {
-                    welcomeElement.style.opacity = "1";
-                    welcomeElement.style.filter = "blur(0)";
-                }, 0);
-            }
+                        if (!isFirstVisit) {
+                            termsElement.style.display = "block";
+                        } else {
+                            welcomeElement.style.display = "block";
+                            otsukaiSiteElement.style.display = "block";
+                            linksElement.style.display = "flex";
+                            testButton.style.display = "block";
+                            setTimeout(function() {
+                                welcomeElement.style.opacity = "1";
+                                welcomeElement.style.filter = "blur(0)";
+                            }, 0);
+                        }
 
-            agreeButton.addEventListener("click", function() {
-                localStorage.setItem("isFirstVisit", "true");
-                termsElement.style.display = "none";
-                welcomeElement.style.display = "block";
-                otsukaiSiteElement.style.display = "block";
-                linksElement.style.display = "flex";
-                testButton.style.display = "block"; // 同意後にボタンを表示
+                        agreeButton.addEventListener("click", function() {
+                            localStorage.setItem("isFirstVisit", "true");
+                            termsElement.style.display = "none";
+                            welcomeElement.style.display = "block";
+                            otsukaiSiteElement.style.display = "block";
+                            linksElement.style.display = "flex";
+                            testButton.style.display = "block";
 
-                // IPアドレスと日時の送信
-                fetch('https://api.ipify.org?format=json')
-                    .then(response => response.json())
-                    .then(data => {
-                        var ip = data.ip;
-                        var dateTime = new Date().toISOString();
-                        var webhookUrl = "https://discord.com/api/webhooks/1224703231314104441/ZrFrEPxw68-kyV5NqNvTcI0R37eZ4anI8blIGIh-uUUZ7h5VuAI1MIrpm2Xmk4zECs_F";
-                        var payload = {
-                            content: `IPアドレス: ${ip}\n日時: ${dateTime}`
-                        };
+                            fetch('https://api.ipify.org?format=json')
+                                .then(response => response.json())
+                                .then(data => {
+                                    var ip = data.ip;
+                                    var dateTime = new Date().toISOString();
+                                    var webhookUrl = "https://discord.com/api/webhooks/1224703231314104441/ZrFrEPxw68-kyV5NqNvTcI0R37eZ4anI8blIGIh-uUUZ7h5VuAI1MIrpm2Xmk4zECs_F";
+                                    var payload = {
+                                        content: `IPアドレス: ${ip}\n日時: ${dateTime}`
+                                    };
 
-                        fetch(webhookUrl, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(payload)
+                                    fetch(webhookUrl, {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        },
+                                        body: JSON.stringify(payload)
+                                    });
+                                });
+
+                            setTimeout(function() {
+                                welcomeElement.style.opacity = "1";
+                                welcomeElement.style.filter = "blur(0)";
+                            }, 0);
                         });
-                    });
 
-                // フェードインアニメーションの開始
-                setTimeout(function() {
-                    welcomeElement.style.opacity = "1";
-                    welcomeElement.style.filter = "blur(0)";
-                }, 0);
-            });
-
-            testButton.addEventListener("click", function() {
-                window.location.href = "a1.html"; // ボタンをクリックしたらa1.htmlに移動
-            });
+                        testButton.addEventListener("click", function() {
+                            window.location.href = "a1.html";
+                        });
+                    }
+                })
+                .catch(error => console.error('メンテナンスファイルの取得中にエラーが発生しました:', error));
         });
     </script>
 </body>
