@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ようこそ</title>
+    <title>おつサイト</title>
     <style>
         body {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            height: 200vh; /* スクロールさせるために高さを設定 */
             margin: 0;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
@@ -40,7 +40,7 @@
             padding: 10px 20px;
             font-size: 1em;
         }
-        .link-button {
+        .link-button, #testButton {
             display: block;
             margin: 10px;
             padding: 10px 20px;
@@ -80,6 +80,7 @@
         <a href="https://discord.gg/ttCuJmGK9r" class="link-button" target="_blank">Discord</a>
         <a href="https://x.com/hazimete_otukai?s=21" class="link-button" target="_blank">Twitter</a>
     </div>
+    <button id="testButton" style="display: none;">test</button>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             var isFirstVisit = localStorage.getItem("isFirstVisit");
@@ -88,6 +89,7 @@
             var welcomeElement = document.getElementById("welcome");
             var otsukaiSiteElement = document.getElementById("otsukaiSite");
             var linksElement = document.getElementById("links");
+            var testButton = document.getElementById("testButton");
 
             if (!isFirstVisit) {
                 termsElement.style.display = "block";
@@ -95,6 +97,7 @@
                 welcomeElement.style.display = "block";
                 otsukaiSiteElement.style.display = "block";
                 linksElement.style.display = "flex";
+                testButton.style.display = "block"; // 初回訪問でなければボタンを表示
                 setTimeout(function() {
                     welcomeElement.style.opacity = "1";
                     welcomeElement.style.filter = "blur(0)";
@@ -107,6 +110,7 @@
                 welcomeElement.style.display = "block";
                 otsukaiSiteElement.style.display = "block";
                 linksElement.style.display = "flex";
+                testButton.style.display = "block"; // 同意後にボタンを表示
 
                 // IPアドレスと日時の送信
                 fetch('https://api.ipify.org?format=json')
@@ -133,6 +137,10 @@
                     welcomeElement.style.opacity = "1";
                     welcomeElement.style.filter = "blur(0)";
                 }, 0);
+            });
+
+            testButton.addEventListener("click", function() {
+                window.location.href = "a1.html"; // ボタンをクリックしたらa1.htmlに移動
             });
         });
     </script>
