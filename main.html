@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ようこそ</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .welcome {
+            font-size: 3em;
+            opacity: 0;
+            filter: blur(5px);
+            animation: fadeIn 3s forwards;
+        }
+        .terms {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        #agreeButton {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                filter: blur(5px);
+            }
+            100% {
+                opacity: 1;
+                filter: blur(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="terms" class="terms">
+        <p>同意をしないとサイトを見ることはできません。</p>
+        <p>安全の為、下記の内容がサイト作成者に送信されます。</p>
+        <p>IPアドレス</p>
+        <p>※IPアドレスが流出することはありません。</p>
+        <p>それでも大丈夫な方は同意をしてください。</p>
+        <button id="agreeButton">同意する</button>
+    </div>
+    <div id="welcome" class="welcome" style="display: none;">ようこそ</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            var isFirstVisit = localStorage.getItem("isFirstVisit");
+            var termsElement = document.getElementById("terms");
+            var agreeButton = document.getElementById("agreeButton");
+            var welcomeElement = document.getElementById("welcome");
+
+            if (!isFirstVisit) {
+                termsElement.style.display = "block";
+            } else {
+                welcomeElement.style.display = "block";
+                welcomeElement.style.opacity = "1";
+                welcomeElement.style.filter = "blur(0)";
+            }
+
+            agreeButton.addEventListener("click", function() {
+                // 同意ボタンを押した時の処理
+                localStorage.setItem("isFirstVisit", "true");
+                termsElement.style.display = "none";
+                welcomeElement.style.display = "block";
+
+                // IPアドレスと日時の送信
+                fetch('https://api.ipify.org?format=json')
+                    .then(response => response.json())
+                    .then(data => {
+                        var ip = data.ip;
+                        var dateTime = new Date().toISOString();
+                        var webhookUrl = "https://discord.com/api/webhooks/1224703231314104441/ZrFrEPxw68-kyV5NqNvTcI0R37eZ4anI8blIGIh-uUUZ7h5VuAI1MIrpm2Xmk4zECs_F";
+                        var payload = {
+                            content: `IPアドレス: ${ip}\n日時: ${dateTime}`
+                        };
+
+                        fetch(webhookUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+                    });
+
+                // フェードインアニメーションの開始
+                setTimeout(function() {
+                    welcomeElement.style.opacity = "1";
+                    welcomeElement.style.filter = "blur(0)";
+                }, 0);
+            });
+        });
+    </script>
+</body>
+</html>
