@@ -41,7 +41,7 @@
             padding: 10px 20px;
             font-size: 1em;
         }
-        .link-button, #testButton {
+        .link-button {
             display: block;
             margin: 10px;
             padding: 10px 20px;
@@ -81,78 +81,78 @@
         <a href="https://discord.gg/ttCuJmGK9r" class="link-button" target="_blank">Discord</a>
         <a href="https://x.com/hazimete_otukai?s=21" class="link-button" target="_blank">Twitter</a>
     </div>
-    <button id="testButton" style="display: none;">test</button>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // メンテナンスファイルを読み込み
-            fetch('mente.txt')
-                .then(response => response.text())
-                .then(data => {
-                    // メンテナンスモードかどうかをチェック
-                    if (data.trim() === "0") {
-                        document.body.innerHTML = "<h1>メンテナンス中</h1>"; // メンテナンスモードの場合はメッセージを表示
-                    } else {
-                        // メンテナンスモードでない場合、通常のコードを実行
-                        var isFirstVisit = localStorage.getItem("isFirstVisit");
-                        var termsElement = document.getElementById("terms");
-                        var agreeButton = document.getElementById("agreeButton");
-                        var welcomeElement = document.querySelector(".welcome");
-                        var otsukaiSiteElement = document.getElementById("otsukaiSite");
-                        var linksElement = document.getElementById("links");
-                        var testButton = document.getElementById("testButton");
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(ipData => {
+                    const userIp = ipData.ip;
 
-                        if (!isFirstVisit) {
-                            termsElement.style.display = "block";
-                        } else {
-                            welcomeElement.style.display = "block";
-                            otsukaiSiteElement.style.display = "block";
-                            linksElement.style.display = "flex";
-                            testButton.style.display = "block";
-                            setTimeout(function() {
-                                welcomeElement.style.opacity = "1";
-                                welcomeElement.style.filter = "blur(0)";
-                            }, 0);
-                        }
+                    fetch('mente.txt')
+                        .then(response => response.text())
+                        .then(data => {
+                            const lines = data.split('\n');
+                            const maintenanceMode = lines[0].trim();
+                            const allowedIp = lines[1].trim();
 
-                        agreeButton.addEventListener("click", function() {
-                            localStorage.setItem("isFirstVisit", "true");
-                            termsElement.style.display = "none";
-                            welcomeElement.style.display = "block";
-                            otsukaiSiteElement.style.display = "block";
-                            linksElement.style.display = "flex";
-                            testButton.style.display = "block";
+                            if (maintenanceMode === "0" && allowedIp !== userIp) {
+                                document.body.innerHTML = "<h1>メンテナンス中</h1>";
+                            } else {
+                                // 通常のコードを実行
+                                var isFirstVisit = localStorage.getItem("isFirstVisit");
+                                var termsElement = document.getElementById("terms");
+                                var agreeButton = document.getElementById("agreeButton");
+                                var welcomeElement = document.querySelector(".welcome");
+                                var otsukaiSiteElement = document.getElementById("otsukaiSite");
+                                var linksElement = document.getElementById("links");
 
-                            fetch('https://api.ipify.org?format=json')
-                                .then(response => response.json())
-                                .then(data => {
-                                    var ip = data.ip;
-                                    var dateTime = new Date().toISOString();
-                                    var webhookUrl = "https://discord.com/api/webhooks/1224703231314104441/ZrFrEPxw68-kyV5NqNvTcI0R37eZ4anI8blIGIh-uUUZ7h5VuAI1MIrpm2Xmk4zECs_F";
-                                    var payload = {
-                                        content: `IPアドレス: ${ip}\n日時: ${dateTime}`
-                                    };
+                                if (!isFirstVisit) {
+                                    termsElement.style.display = "block";
+                                } else {
+                                    welcomeElement.style.display = "block";
+                                    otsukaiSiteElement.style.display = "block";
+                                    linksElement.style.display = "flex";
+                                    setTimeout(function() {
+                                        welcomeElement.style.opacity = "1";
+                                        welcomeElement.style.filter = "blur(0)";
+                                    }, 0);
+                                }
 
-                                    fetch(webhookUrl, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify(payload)
-                                    });
+                                agreeButton.addEventListener("click", function() {
+                                    localStorage.setItem("isFirstVisit", "true");
+                                    termsElement.style.display = "none";
+                                    welcomeElement.style.display = "block";
+                                    otsukaiSiteElement.style.display = "block";
+                                    linksElement.style.display = "flex";
+
+                                    fetch('https://api.ipify.org?format=json')
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            var ip = data.ip;
+                                            var dateTime = new Date().toISOString();
+                                            var webhookUrl = "https://discord.com/api/webhooks/1224703231314104441/ZrFrEPxw68-kyV5NqNvTcI0R37eZ4anI8blIGIh-uUUZ7h5VuAI1MIrpm2Xmk4zECs_F";
+                                            var payload = {
+                                                content: `IPアドレス: ${ip}\n日時: ${dateTime}`
+                                            };
+
+                                            fetch(webhookUrl, {
+                                                method: 'POST',
+                                                headers: {
+                                                    'Content-Type': 'application/json'
+                                                },
+                                                body: JSON.stringify(payload)
+                                            });
+                                        });
+
+                                    setTimeout(function() {
+                                        welcomeElement.style.opacity = "1";
+                                        welcomeElement.style.filter = "blur(0)";
+                                    }, 0);
                                 });
-
-                            setTimeout(function() {
-                                welcomeElement.style.opacity = "1";
-                                welcomeElement.style.filter = "blur(0)";
-                            }, 0);
-                        });
-
-                        testButton.addEventListener("click", function() {
-                            window.location.href = "a1.html";
-                        });
-                    }
-                })
-                .catch(error => console.error('メンテナンスファイルの取得中にエラーが発生しました:', error));
+                            }
+                        })
+                        .catch(error => console.error('メンテナンスファイルの取得中にエラーが発生しました:', error));
+                });
         });
     </script>
 </body>
