@@ -10,7 +10,6 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 200vh; /* スクロールさせるために高さを設定 */
             margin: 0;
             background-color: #f0f0f0;
             font-family: Arial, sans-serif;
@@ -21,6 +20,7 @@
             opacity: 0;
             filter: blur(5px);
             animation: fadeIn 3s forwards;
+            margin-top: 20px; /* ようこその見出しに上部の余白を追加 */
         }
         .terms, .links {
             display: none;
@@ -34,6 +34,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            margin-top: 20px; /* リンクボタンの上部に余白を追加 */
         }
         #agreeButton {
             margin-top: 20px;
@@ -65,6 +66,7 @@
     </style>
 </head>
 <body>
+    <h1 class="welcome" style="display: none;">ようこそ</h1>
     <div id="terms" class="terms">
         <p>同意をしないとサイトを見ることはできません。</p>
         <p>安全の為、下記の内容がサイト作成者に送信されます。</p>
@@ -73,7 +75,6 @@
         <p>それでも大丈夫な方は同意をしてください。</p>
         <button id="agreeButton">同意する</button>
     </div>
-    <div id="welcome" class="welcome" style="display: none;">ようこそ</div>
     <h2 id="otsukaiSite" style="display: none;">おつかいサイト</h2>
     <div id="links" class="links" style="display: none;">
         <a href="https://youtube.com/@hazimete_otukai?si=KTTxSc2gnROgsBjn" class="link-button" target="_blank">YouTube チャンネル</a>
@@ -86,7 +87,7 @@
             var isFirstVisit = localStorage.getItem("isFirstVisit");
             var termsElement = document.getElementById("terms");
             var agreeButton = document.getElementById("agreeButton");
-            var welcomeElement = document.getElementById("welcome");
+            var welcomeElement = document.querySelector(".welcome"); // ようこその要素を取得
             var otsukaiSiteElement = document.getElementById("otsukaiSite");
             var linksElement = document.getElementById("links");
             var testButton = document.getElementById("testButton");
