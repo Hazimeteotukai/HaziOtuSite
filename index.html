@@ -89,8 +89,16 @@
                 .then(response => response.text())
                 .then(data => {
                     // メンテナンスモードかどうかをチェック
-                    if (data.trim() === "0") {
-                        document.body.innerHTML = "<h1>メンテナンス中</h1>"; // メンテナンスモードの場合はメッセージを表示
+                    const maintenanceData = data.trim().split('\n');
+                    const maintenanceMode = maintenanceData[0] === "0";
+                    const userIp = maintenanceData[1];
+
+                    if (maintenanceMode && userIp === "{サイトアクセス時に獲得したIPアドレス}") {
+                        // メンテナンスモードであり、かつIPアドレスが一致する場合
+                        // メンテナンス中でもアクセスを許可
+                    } else if (maintenanceMode) {
+                        // メンテナンスモードの場合はメッセージを表示
+                        document.body.innerHTML = "<h1>メンテナンス中</h1>";
                     } else {
                         // メンテナンスモードでない場合、通常のコードを実行
                         var isFirstVisit = localStorage.getItem("isFirstVisit");
@@ -143,7 +151,7 @@
 
                             setTimeout(function() {
                                 welcomeElement.style.opacity = "1";
-                                welcomeElement.style.filter = "blur(0)";
+                                welcomeElement.style.filter =                            "blur(0)";
                             }, 0);
                         });
 
