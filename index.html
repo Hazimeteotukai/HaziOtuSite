@@ -89,12 +89,7 @@
                 .then(response => response.text())
                 .then(data => {
                     // メンテナンスモードかどうかをチェック
-                    const lines = data.trim().split('\n');
-                    const maintenanceMode = lines[0].trim() === "0";
-                    const allowedIP = lines[1].trim();
-                    const currentIP = "";
-
-                    if (maintenanceMode && allowedIP !== currentIP) {
+                    if (data.trim() === "0") {
                         document.body.innerHTML = "<h1>メンテナンス中</h1>"; // メンテナンスモードの場合はメッセージを表示
                     } else {
                         // メンテナンスモードでない場合、通常のコードを実行
