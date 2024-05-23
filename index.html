@@ -84,16 +84,30 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('IPアドレスの取得に失敗しました');
+                    }
+                    return response.json();
+                })
                 .then(ipData => {
                     const userIp = ipData.ip;
+                    console.log(`取得したIPアドレス: ${userIp}`); // デバッグ情報
 
-                    fetch('mente.txt')
-                        .then(response => response.text())
+                    return fetch('mente.txt')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('メンテナンスファイルの取得に失敗しました');
+                            }
+                            return response.text();
+                        })
                         .then(data => {
+                            console.log(`mente.txtの内容: ${data}`); // デバッグ情報
                             const lines = data.split('\n');
                             const maintenanceMode = lines[0].trim();
                             const allowedIp = lines[1] ? lines[1].trim() : "";
+
+                            console.log(`メンテナンスモード: ${maintenanceMode}, 許可されたIPアドレス: ${allowedIp}`); // デバッグ情報
 
                             if (maintenanceMode === "0" && allowedIp !== userIp) {
                                 document.body.innerHTML = "<h1>メンテナンス中</h1>";
@@ -150,15 +164,11 @@
                                     }, 0);
                                 });
                             }
-                        })
-                        .catch(error => {
-                            console.error('メンテナンスファイルの取得中にエラーが発生しました:', error);
-                            document.body.innerHTML = "<h1>エラーが発生しました</h1>";
                         });
                 })
                 .catch(error => {
-                    console.error('IPアドレスの取得中にエラーが発生しました:', error);
-                    document.body.innerHTML = "<h1>エラーが発生しました</h1>";
+                    console.error('エラーが発生しました:', error);
+                    document.body.innerHTML = `<h1>エラーが発生しました: ${error.message}</h1>`;
                 });
         });
     </script>
