@@ -28,3 +28,16 @@ app.post('/send-webhook', async (req, res) => {
         });
 
         if (response.ok) {
+            res.status(200).send('Webhook sent successfully');
+        } else {
+            res.status(500).send('Failed to send webhook');
+        }
+    } catch (error) {
+        console.error('Error sending webhook:', error);
+        res.status(500).send('Error sending webhook');
+    }
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
