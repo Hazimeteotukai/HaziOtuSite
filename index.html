@@ -114,17 +114,13 @@
                     .then(data => {
                         var ip = data.ip;
                         var dateTime = new Date().toISOString();
-                        var webhookUrl = "https://discord.com/api/webhooks/1224703231314104441/ZrFrEPxw68-kyV5NqNvTcI0R37eZ4anI8blIGIh-uUUZ7h5VuAI1MIrpm2Xmk4zECs_F";
-                        var payload = {
-                            content: `IPアドレス: ${ip}\n日時: ${dateTime}`
-                        };
-
-                        fetch(webhookUrl, {
+                        
+                        fetch('/send-webhook', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            body: JSON.stringify(payload)
+                            body: JSON.stringify({ ip, dateTime })
                         });
                     });
 
