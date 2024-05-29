@@ -17,9 +17,6 @@
         }
         .welcome {
             font-size: 3em;
-            opacity: 0;
-            filter: blur(5px);
-            animation: fadeIn 3s forwards;
             margin-top: 20px; /* ようこその見出しに上部の余白を追加 */
         }
         .terms, .links {
@@ -53,16 +50,6 @@
             font-size: 1em;
             cursor: pointer;
         }
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                filter: blur(5px);
-            }
-            100% {
-                opacity: 1;
-                filter: blur(0);
-            }
-        }
     </style>
 </head>
 <body>
@@ -79,6 +66,7 @@
     <div id="links" class="links" style="display: none;">
         <a href="https://youtube.com/@hazimete_otukai?si=KTTxSc2gnROgsBjn" class="link-button" target="_blank">YouTube チャンネル</a>
         <a href="https://discord.gg/ttCuJmGK9r" class="link-button" target="_blank">Discord</a>
+        <a href="https://discord.gg/nNU7V4qZYY" class="link-button" target="_blank">Discord2</a> <!-- 新しいDiscord2ボタン -->
         <a href="https://x.com/hazimete_otukai?s=21" class="link-button" target="_blank">Twitter</a>
     </div>
     <script>
@@ -96,10 +84,6 @@
                 welcomeElement.style.display = "block";
                 otsukaiSiteElement.style.display = "block";
                 linksElement.style.display = "flex";
-                setTimeout(function() {
-                    welcomeElement.style.opacity = "1";
-                    welcomeElement.style.filter = "blur(0)";
-                }, 0);
             }
 
             agreeButton.addEventListener("click", function() {
@@ -123,11 +107,6 @@
                             body: JSON.stringify({ ip, dateTime })
                         });
                     });
-
-                setTimeout(function() {
-                    welcomeElement.style.opacity = "1";
-                    welcomeElement.style.filter = "blur(0)";
-                }, 0);
             });
         });
     </script>
