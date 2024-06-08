@@ -1,26 +1,63 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>GameGuardian Lua Code Generator</title>
+    <title>GameGuardian Lua コード生成器</title>
     <script>
+        function generateRefineInputs() {
+            const refineCount = document.getElementById("refineCount").value;
+            const refineContainer = document.getElementById("refineContainer");
+
+            while (refineContainer.firstChild) {
+                refineContainer.removeChild(refineContainer.firstChild);
+            }
+
+            for (let i = 0; i < refineCount; i++) {
+                const label = document.createElement("label");
+                label.textContent = `リファイン値 ${i + 1}:`;
+                const input = document.createElement("input");
+                input.type = "text";
+                input.name = `refineValue${i}`;
+                input.id = `refineValue${i}`;
+                input.required = true;
+                refineContainer.appendChild(label);
+                refineContainer.appendChild(input);
+                refineContainer.appendChild(document.createElement("br"));
+                refineContainer.appendChild(document.createElement("br"));
+            }
+        }
+
         function generateLuaCode() {
             const memoryRange = document.getElementById("memoryRange").value;
             const valueType = document.getElementById("valueType").value;
             const searchValue = document.getElementById("searchValue").value;
             const editValue = document.getElementById("editValue").value;
-            const refineValue = document.getElementById("refineValue").value;
+            const refineCount = document.getElementById("refineCount").value;
 
             let luaCode = `
 gg.setRanges(gg.REGION_${memoryRange.toUpperCase()})
 gg.searchNumber('${searchValue}', gg.TYPE_${valueType.toUpperCase()})
 `;
-            if (refineValue) {
+
+            for (let i = 0; i < refineCount; i++) {
+                const refineValue = document.getElementById(`refineValue${i}`).value;
                 luaCode += `gg.refineNumber('${refineValue}', gg.TYPE_${valueType.toUpperCase()})\n`;
             }
+
+            if (document.getElementById("refineDelayCheckbox").checked) {
+                const refineDelay = document.getElementById("refineDelay").value;
+                luaCode += `gg.sleep(${refineDelay} * 1000)\n`;
+            }
+
             luaCode += `results = gg.getResults(100)\n`;
             luaCode += `for i, v in ipairs(results) do\n`;
             luaCode += `  v.value = '${editValue}'\n`;
             luaCode += `end\n`;
+
+            if (document.getElementById("editDelayCheckbox").checked) {
+                const editDelay = document.getElementById("editDelay").value;
+                luaCode += `gg.sleep(${editDelay} * 1000)\n`;
+            }
+
             luaCode += `gg.setValues(results)\n`;
 
             document.getElementById("luaCode").innerText = luaCode.trim();
@@ -28,9 +65,9 @@ gg.searchNumber('${searchValue}', gg.TYPE_${valueType.toUpperCase()})
     </script>
 </head>
 <body>
-    <h1>GameGuardian Lua Code Generator</h1>
+    <h1>GameGuardian Lua コード生成器</h1>
     <form onsubmit="generateLuaCode(); return false;">
-        <label for="memoryRange">Memory Range:</label>
+        <label for="memoryRange">メモリー範囲:</label>
         <select id="memoryRange" name="memoryRange">
             <option value="anonymous">Anonymous</option>
             <option value="heap">Heap</option>
@@ -46,7 +83,7 @@ gg.searchNumber('${searchValue}', gg.TYPE_${valueType.toUpperCase()})
         </select>
         <br><br>
 
-        <label for="valueType">Value Type:</label>
+        <label for="valueType">値の種類:</label>
         <select id="valueType" name="valueType">
             <option value="auto">Auto</option>
             <option value="dword">Dword</option>
@@ -60,22 +97,43 @@ gg.searchNumber('${searchValue}', gg.TYPE_${valueType.toUpperCase()})
         </select>
         <br><br>
 
-        <label for="searchValue">Search Value:</label>
+        <label for="searchValue">検索値:</label>
         <input type="text" id="searchValue" name="searchValue" required>
         <br><br>
 
-        <label for="editValue">Edit Value:</label>
+        <label for="editValue">編集値:</label>
         <input type="text" id="editValue" name="editValue" required>
         <br><br>
 
-        <label for="refineValue">Refine Value (optional):</label>
-        <input type="text" id="refineValue" name="refineValue">
+        <label for="refineCount">リファイン回数:</label>
+        <select id="refineCount" name="refineCount" onchange="generateRefineInputs()">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+        </select>
         <br><br>
 
-        <button type="submit">Generate Lua Code</button>
+        <div id="refineContainer"></div>
+
+        <input type="checkbox" id="refineDelayCheckbox">
+        <label for="refineDelayCheckbox">リファイン後に実行する:</label>
+        <input type="number" id="refineDelay" name="refineDelay" min="1" max="60" value="1">
+        秒
+        <br><br>
+
+        <input type="checkbox" id="editDelayCheckbox">
+        <label for="editDelayCheckbox">編集後に実行する:</label>
+        <input type="number" id="editDelay" name="editDelay" min="1" max="60" value="1">
+        秒
+        <br><br>
+
+        <button type="submit">Lua コードを生成</button>
     </form>
 
-    <h2>Generated Lua Code:</h2>
+    <h2>生成された Lua コード:</h2>
     <pre id="luaCode"></pre>
 </body>
 </html>
