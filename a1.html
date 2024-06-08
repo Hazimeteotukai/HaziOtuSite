@@ -21,6 +21,26 @@
                 input.required = true;
                 refineContainer.appendChild(label);
                 refineContainer.appendChild(input);
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.id = `refineDelayCheckbox${i}`;
+                refineContainer.appendChild(checkbox);
+
+                const delayLabel = document.createElement("label");
+                delayLabel.textContent = " リファイン後に実行する:";
+                refineContainer.appendChild(delayLabel);
+
+                const delayInput = document.createElement("input");
+                delayInput.type = "number";
+                delayInput.id = `refineDelay${i}`;
+                delayInput.name = `refineDelay${i}`;
+                delayInput.min = "1";
+                delayInput.max = "60";
+                delayInput.value = "1";
+                refineContainer.appendChild(delayInput);
+
+                refineContainer.appendChild(document.createTextNode(" 秒"));
                 refineContainer.appendChild(document.createElement("br"));
                 refineContainer.appendChild(document.createElement("br"));
             }
@@ -46,11 +66,11 @@ gg.searchNumber('${searchValue}', gg.TYPE_${valueType.toUpperCase()})
             for (let i = 0; i < refineCount; i++) {
                 const refineValue = document.getElementById(`refineValue${i}`).value;
                 luaCode += `gg.refineNumber('${refineValue}', gg.TYPE_${valueType.toUpperCase()})\n`;
-            }
 
-            if (document.getElementById("refineDelayCheckbox").checked) {
-                const refineDelay = document.getElementById("refineDelay").value;
-                luaCode += `gg.sleep(${refineDelay} * 1000)\n`;
+                if (document.getElementById(`refineDelayCheckbox${i}`).checked) {
+                    const refineDelay = document.getElementById(`refineDelay${i}`).value;
+                    luaCode += `gg.sleep(${refineDelay} * 1000)\n`;
+                }
             }
 
             luaCode += `results = gg.getResults(100)\n`;
@@ -124,12 +144,6 @@ gg.searchNumber('${searchValue}', gg.TYPE_${valueType.toUpperCase()})
         <br><br>
 
         <div id="refineContainer"></div>
-
-        <input type="checkbox" id="refineDelayCheckbox">
-        <label for="refineDelayCheckbox">リファイン後に実行する:</label>
-        <input type="number" id="refineDelay" name="refineDelay" min="1" max="60" value="1">
-        秒
-        <br><br>
 
         <label for="editValue">編集値:</label>
         <input type="text" id="editValue" name="editValue" required>
