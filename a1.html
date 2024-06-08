@@ -38,6 +38,11 @@ gg.setRanges(gg.REGION_${memoryRange.toUpperCase()})
 gg.searchNumber('${searchValue}', gg.TYPE_${valueType.toUpperCase()})
 `;
 
+            if (document.getElementById("searchDelayCheckbox").checked) {
+                const searchDelay = document.getElementById("searchDelay").value;
+                luaCode += `gg.sleep(${searchDelay} * 1000)\n`;
+            }
+
             for (let i = 0; i < refineCount; i++) {
                 const refineValue = document.getElementById(`refineValue${i}`).value;
                 luaCode += `gg.refineNumber('${refineValue}', gg.TYPE_${valueType.toUpperCase()})\n`;
@@ -101,8 +106,10 @@ gg.searchNumber('${searchValue}', gg.TYPE_${valueType.toUpperCase()})
         <input type="text" id="searchValue" name="searchValue" required>
         <br><br>
 
-        <label for="editValue">編集値:</label>
-        <input type="text" id="editValue" name="editValue" required>
+        <input type="checkbox" id="searchDelayCheckbox">
+        <label for="searchDelayCheckbox">検索後に実行する:</label>
+        <input type="number" id="searchDelay" name="searchDelay" min="1" max="60" value="1">
+        秒
         <br><br>
 
         <label for="refineCount">リファイン回数:</label>
@@ -122,6 +129,10 @@ gg.searchNumber('${searchValue}', gg.TYPE_${valueType.toUpperCase()})
         <label for="refineDelayCheckbox">リファイン後に実行する:</label>
         <input type="number" id="refineDelay" name="refineDelay" min="1" max="60" value="1">
         秒
+        <br><br>
+
+        <label for="editValue">編集値:</label>
+        <input type="text" id="editValue" name="editValue" required>
         <br><br>
 
         <input type="checkbox" id="editDelayCheckbox">
