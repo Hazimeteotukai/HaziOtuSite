@@ -3,28 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Script Encryptor</title>
+    <title>File Encryptor</title>
 </head>
 <body>
     <h1>Game Guardian Script Encryptor</h1>
-    <textarea id="scriptInput" rows="10" cols="50" placeholder="Enter your script here..."></textarea><br>
-    <button onclick="encryptScript()">Encrypt Script</button>
-    <h2>Encrypted Script</h2>
-    <textarea id="encryptedOutput" rows="10" cols="50" readonly></textarea><br>
+    <input type="file" id="fileInput" accept=".txt">
+    <button onclick="encryptFile()">Encrypt and Download Script</button>
     <a id="downloadLink" style="display: none;" download="encrypted_script.txt">Download Encrypted Script</a>
 
     <script>
-        function encryptScript() {
-            var script = document.getElementById("scriptInput").value;
-            var encrypted = btoa(script);
-            document.getElementById("encryptedOutput").value = encrypted;
+        function encryptFile() {
+            var fileInput = document.getElementById("fileInput");
+            var file = fileInput.files[0];
+            
+            if (!file) {
+                alert("Please select a file.");
+                return;
+            }
 
-            // Generate download link
-            var downloadLink = document.getElementById("downloadLink");
-            var blob = new Blob([encrypted], { type: 'text/plain' });
-            var url = URL.createObjectURL(blob);
-            downloadLink.href = url;
-            downloadLink.style.display = 'inline';
+            var reader = new FileReader();
+            reader.onload = function(event) {
+                var script = event.target.result;
+                var encrypted = btoa(script);
+
+                // Generate download link
+                var downloadLink = document.getElementById("downloadLink");
+                var blob = new Blob([encrypted], { type: 'text/plain' });
+                var url = URL.createObjectURL(blob);
+                downloadLink.href = url;
+                downloadLink.style.display = 'inline';
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>
