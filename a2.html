@@ -3,160 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lua File Encryptor/Decryptor</title>
+    <title>Script Encryptor</title>
 </head>
 <body>
-    <h1>Lua File Encryptor/Decryptor</h1>
-
-    <!-- Encrypt Section -->
-    <h2>Encrypt</h2>
-    <input type="file" id="fileInputEncrypt">
-    <input type="password" id="passwordInputEncrypt" placeholder="Enter password">
-    <button onclick="encryptFile()">Encrypt</button>
-    <a id="downloadLinkEncrypt" style="display: none;">Download Encrypted File</a>
-
-    <!-- Decrypt Section -->
-    <h2>Decrypt</h2>
-    <input type="file" id="fileInputDecrypt">
-    <input type="password" id="passwordInputDecrypt" placeholder="Enter password">
-    <button onclick="decryptFile()">Decrypt</button>
-    <a id="downloadLinkDecrypt" style="display: none;">Download Decrypted File</a>
+    <h1>Game Guardian Script Encryptor</h1>
+    <textarea id="scriptInput" rows="10" cols="50" placeholder="Enter your script here..."></textarea><br>
+    <button onclick="encryptScript()">Encrypt Script</button>
+    <h2>Encrypted Script</h2>
+    <textarea id="encryptedOutput" rows="10" cols="50" readonly></textarea><br>
+    <a id="downloadLink" style="display: none;" download="encrypted_script.txt">Download Encrypted Script</a>
 
     <script>
-        async function encryptFile() {
-            const fileInput = document.getElementById('fileInputEncrypt');
-            const passwordInput = document.getElementById('passwordInputEncrypt');
-            const downloadLink = document.getElementById('downloadLinkEncrypt');
+        function encryptScript() {
+            var script = document.getElementById("scriptInput").value;
+            var encrypted = btoa(script);
+            document.getElementById("encryptedOutput").value = encrypted;
 
-            if (fileInput.files.length === 0) {
-                alert("Please select a file.");
-                return;
-            }
-
-            if (!passwordInput.value) {
-                alert("Please enter a password.");
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const password = passwordInput.value;
-
-            const reader = new FileReader();
-            reader.onload = async function(event) {
-                const fileData = event.target.result;
-
-                const encryptedData = await encryptData(fileData, password);
-                
-                const blob = new Blob([encryptedData], { type: 'application/octet-stream' });
-                const url = URL.createObjectURL(blob);
-
-                downloadLink.href = url;
-                downloadLink.download = file.name + '.encrypted';
-                downloadLink.style.display = 'block';
-                downloadLink.innerText = 'Download Encrypted File';
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        async function decryptFile() {
-            const fileInput = document.getElementById('fileInputDecrypt');
-            const passwordInput = document.getElementById('passwordInputDecrypt');
-            const downloadLink = document.getElementById('downloadLinkDecrypt');
-
-            if (fileInput.files.length === 0) {
-                alert("Please select a file.");
-                return;
-            }
-
-            if (!passwordInput.value) {
-                alert("Please enter a password.");
-                return;
-            }
-
-            const file = fileInput.files[0];
-            const password = passwordInput.value;
-
-            const reader = new FileReader();
-            reader.onload = async function(event) {
-                const fileData = event.target.result;
-
-                try {
-                    const decryptedData = await decryptData(fileData, password);
-                    
-                    const blob = new Blob([decryptedData], { type: 'application/octet-stream' });
-                    const url = URL.createObjectURL(blob);
-
-                    downloadLink.href = url;
-                    downloadLink.download = file.name.replace('.encrypted', '.lua');
-                    downloadLink.style.display = 'block';
-                    downloadLink.innerText = 'Download Decrypted File';
-                } catch (e) {
-                    alert('Decryption failed. Check your password and try again.');
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
-        async function encryptData(data, password) {
-            const enc = new TextEncoder();
-            const keyMaterial = await getKeyMaterial(password);
-            const key = await getKey(keyMaterial);
-
-            const iv = window.crypto.getRandomValues(new Uint8Array(16));
-            const algorithm = {
-                name: "AES-CBC",
-                iv: iv
-            };
-
-            const encrypted = await window.crypto.subtle.encrypt(algorithm, key, data);
-
-            const encryptedData = new Uint8Array(iv.byteLength + encrypted.byteLength);
-            encryptedData.set(iv);
-            encryptedData.set(new Uint8Array(encrypted), iv.byteLength);
-
-            return encryptedData;
-        }
-
-        async function decryptData(data, password) {
-            const keyMaterial = await getKeyMaterial(password);
-            const salt = data.slice(0, 16);
-            const iv = data.slice(16, 32);
-            const encryptedData = data.slice(32);
-            const key = await getKey(keyMaterial, salt);
-
-            const algorithm = {
-                name: "AES-CBC",
-                iv: iv
-            };
-
-            const decrypted = await window.crypto.subtle.decrypt(algorithm, key, encryptedData);
-            return new Uint8Array(decrypted);
-        }
-
-        async function getKeyMaterial(password) {
-            const enc = new TextEncoder();
-            return window.crypto.subtle.importKey(
-                "raw",
-                enc.encode(password),
-                { name: "PBKDF2" },
-                false,
-                ["deriveBits", "deriveKey"]
-            );
-        }
-
-        async function getKey(keyMaterial, salt = window.crypto.getRandomValues(new Uint8Array(16))) {
-            return window.crypto.subtle.deriveKey(
-                {
-                    name: "PBKDF2",
-                    salt: salt,
-                    iterations: 100000,
-                    hash: "SHA-256"
-                },
-                keyMaterial,
-                { name: "AES-CBC", length: 256 },
-                true,
-                ["encrypt", "decrypt"]
-            );
+            // Generate download link
+            var downloadLink = document.getElementById("downloadLink");
+            var blob = new Blob([encrypted], { type: 'text/plain' });
+            var url = URL.createObjectURL(blob);
+            downloadLink.href = url;
+            downloadLink.style.display = 'inline';
         }
     </script>
 </body>
