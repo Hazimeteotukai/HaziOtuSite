@@ -7,15 +7,8 @@
     <script>
         function isSafari() {
             var ua = navigator.userAgent.toLowerCase();
-            return (ua.indexOf('safari') > -1 && 
-                    ua.indexOf('chrome') == -1 && 
-                    ua.indexOf('firefox') == -1 && 
-                    ua.indexOf('edg') == -1 && 
-                    ua.indexOf('opera') == -1 && 
-                    ua.indexOf('opr') == -1 && 
-                    ua.indexOf('msie') == -1 && 
-                    ua.indexOf('trident') == -1 && 
-                    ua.indexOf('brave') == -1);
+            var isSafari = ua.indexOf('safari') > -1 && ua.indexOf('chrome') == -1 && ua.indexOf('firefox') == -1 && ua.indexOf('edg') == -1 && ua.indexOf('opr') == -1 && ua.indexOf('opera') == -1 && ua.indexOf('brave') == -1 && ua.indexOf('trident') == -1 && ua.indexOf('msie') == -1 && ua.indexOf('android') == -1;
+            return isSafari;
         }
 
         window.onload = function() {
