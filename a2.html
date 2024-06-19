@@ -3,22 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Safari Only Page</title>
-    <script>
-        function isSafari() {
-            var ua = navigator.userAgent.toLowerCase();
-            var isSafari = ua.indexOf('safari') > -1 && ua.indexOf('chrome') == -1 && ua.indexOf('firefox') == -1 && ua.indexOf('edg') == -1 && ua.indexOf('opr') == -1 && ua.indexOf('opera') == -1 && ua.indexOf('brave') == -1 && ua.indexOf('trident') == -1 && ua.indexOf('msie') == -1 && ua.indexOf('android') == -1;
-            return isSafari;
-        }
-
-        window.onload = function() {
-            if (!isSafari()) {
-                document.body.innerHTML = '<h1>このページはSafariでのみアクセス可能です。</h1>';
-            }
-        }
-    </script>
+    <title>Wi-Fi Check</title>
 </head>
 <body>
-    <h1>このページはSafariでアクセスしています。</h1>
+    <script>
+        if (navigator.connection) {
+            const connectionType = navigator.connection.effectiveType;
+            if (connectionType !== 'wifi') {
+                document.body.innerHTML = '<h1>このページはWi-Fi接続時のみ利用可能です。</h1>';
+            } else {
+                document.body.innerHTML = '<h1>Wi-Fi接続が確認されました。ようこそ！</h1>';
+            }
+        } else {
+            document.body.innerHTML = '<h1>接続情報を取得できません。Wi-Fi接続を確認してください。</h1>';
+        }
+    </script>
 </body>
 </html>
