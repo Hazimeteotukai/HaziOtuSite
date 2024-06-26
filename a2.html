@@ -2,21 +2,37 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wi-Fi Check</title>
+    <title>Wi-Fi接続チェック</title>
+    <style>
+        .disabled {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+    </style>
 </head>
 <body>
+    <h1>Wi-Fi接続チェック</h1>
+    <p id="status">Wi-Fi接続状態を確認中...</p>
+    <button id="nextButton" class="disabled">次へ</button>
+
     <script>
-        if (navigator.connection) {
-            const connectionType = navigator.connection.effectiveType;
-            if (connectionType !== 'wifi') {
-                document.body.innerHTML = '<h1>このページはWi-Fi接続時のみ利用可能です。</h1>';
+        function checkWiFiConnection() {
+            if (navigator.onLine) {
+                // ネットワークに接続されている場合
+                document.getElementById('status').textContent = 'Wi-Fiに接続されています。';
+                document.getElementById('nextButton').classList.remove('disabled');
             } else {
-                document.body.innerHTML = '<h1>Wi-Fi接続が確認されました。ようこそ！</h1>';
+                // ネットワークに接続されていない場合
+                document.getElementById('status').textContent = 'Wi-Fiに接続されていません。接続を確認してください。';
+                document.getElementById('nextButton').classList.add('disabled');
             }
-        } else {
-            document.body.innerHTML = '<h1>接続情報を取得できません。Wi-Fi接続を確認してください。</h1>';
         }
+
+        window.addEventListener('online', checkWiFiConnection);
+        window.addEventListener('offline', checkWiFiConnection);
+
+        // ページ読み込み時にチェック
+        window.onload = checkWiFiConnection;
     </script>
 </body>
 </html>
