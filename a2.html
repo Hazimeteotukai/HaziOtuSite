@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Wi-Fi接続チェック</title>
+    <title>ネットワーク接続チェック</title>
     <style>
         .disabled {
             pointer-events: none;
@@ -11,28 +11,30 @@
     </style>
 </head>
 <body>
-    <h1>Wi-Fi接続チェック</h1>
-    <p id="status">Wi-Fi接続状態を確認中...</p>
+    <h1>ネットワーク接続チェック</h1>
+    <p id="status">ネットワーク接続状態を確認中...</p>
     <button id="nextButton" class="disabled">次へ</button>
 
     <script>
-        function checkWiFiConnection() {
-            if (navigator.onLine) {
-                // ネットワークに接続されている場合
-                document.getElementById('status').textContent = 'Wi-Fiに接続されています。';
-                document.getElementById('nextButton').classList.remove('disabled');
-            } else {
-                // ネットワークに接続されていない場合
-                document.getElementById('status').textContent = 'Wi-Fiに接続されていません。接続を確認してください。';
+        async function checkNetworkConnection() {
+            try {
+                const response = await fetch('https://www.google.com', { method: 'HEAD' });
+                if (response.ok) {
+                    document.getElementById('status').textContent = 'ネットワークに接続されています。';
+                    document.getElementById('nextButton').classList.remove('disabled');
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            } catch (error) {
+                document.getElementById('status').textContent = 'ネットワークに接続されていません。接続を確認してください。';
                 document.getElementById('nextButton').classList.add('disabled');
             }
         }
 
-        window.addEventListener('online', checkWiFiConnection);
-        window.addEventListener('offline', checkWiFiConnection);
+        window.addEventListener('online', checkNetworkConnection);
+        window.addEventListener('offline', checkNetworkConnection);
 
-        // ページ読み込み時にチェック
-        window.onload = checkWiFiConnection;
+        window.onload = checkNetworkConnection;
     </script>
 </body>
 </html>
